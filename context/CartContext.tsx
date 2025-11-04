@@ -6,7 +6,10 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  image: string;
+  // optional helpers: some product sources use `image` while others use `images` array
+  image?: string;
+  images?: string[];
+  quantity?: number;
 }
 
 interface CartContextType {
@@ -44,8 +47,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addToCart = (product: Product) => {
     setCart((prev) => {
       const exists = prev.find((p) => p.id === product.id);
-      if (exists) return prev; // prevent duplicate
-      return [...prev, product];
+      const qtyToAdd = product.quantity && product.quantity > 0 ? product.quantity : 1;
+      if (exists) {
+        // increment existing quantity
+        return prev.map((p) =>
+          p.id === product.id ? { ...p, quantity: (p.quantity || 1) + qtyToAdd } : p
+        );
+      }
+
+      // normalize stored product: prefer images[0] -> image
+      const normalized: Product = {
+        ...product,
+        quantity: qtyToAdd,
+        image: product.image || (product.images ? product.images[0] : undefined),
+      };
+
+      return [...prev, normalized];
     });
   };
 
