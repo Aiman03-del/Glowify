@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import Link from "next/link";
 
 const products = [
   {
@@ -47,12 +48,21 @@ export default function FeaturedProducts() {
             <div className="p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">{p.name}</h3>
               <p className="text-pink-600 font-bold mb-4">${p.price}</p>
-              <button
-                onClick={() => addToCart(p)}
-                className="bg-pink-600 text-white px-4 py-2 rounded-full hover:bg-pink-700 transition"
-              >
-                Add to Cart
-              </button>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => addToCart(p)}
+                  className="bg-pink-600 text-white px-4 py-2 rounded-full hover:bg-pink-700 transition"
+                >
+                  Add to Cart
+                </button>
+
+                <Link
+                  href={`/products/${p.id}`}
+                  className="text-sm underline text-pink-600 hover:text-pink-700"
+                >
+                  View Details
+                </Link>
+              </div>
             </div>
           </motion.div>
         ))}
