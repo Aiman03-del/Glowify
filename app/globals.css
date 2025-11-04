@@ -134,3 +134,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Optional simple input utilities (used when DaisyUI/shadcn not present) */
+.input {
+  @apply border rounded-md px-3 py-2 bg-white;
+}
+.input-bordered {
+  @apply border-gray-200;
+}
