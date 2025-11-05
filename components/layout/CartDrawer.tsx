@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -45,23 +46,30 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                 <p className="text-gray-500 text-center mt-10">Your cart is empty</p>
               ) : (
                 cart.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between border-b pb-2">
-                    <img
-                      src={item.image || item.images?.[0]}
+                  <div key={item.cartItemId} className="flex items-center justify-between border-b pb-2">
+                    <Image
+                      src={item.image || item.images?.[0] || "/assets/hero-model.jpg"}
                       alt={item.name}
+                      width={48}
+                      height={48}
+                      loading="lazy"
                       className="w-12 h-12 rounded object-cover"
                     />
                     <div className="flex-1 px-3 text-left">
                       <p className="font-semibold">{item.name}</p>
+                      {item.options && (
+                        <p className="text-xs text-gray-500">{Object.entries(item.options).map(([k, v]) => `${k}: ${v}`).join(' • ')}</p>
+                      )}
                       <p className="text-xs text-gray-500">Qty: {item.quantity || 1}</p>
                       <p className="text-pink-600 font-bold">${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</p>
                     </div>
                     <button
+                      aria-label={`Remove ${item.name} from cart`}
                       onClick={() => {
-                        removeFromCart(item.id);
+                        removeFromCart(item.cartItemId);
                         toast.success(`${item.name} removed from cart`);
                       }}
-                      className="text-red-500 hover:text-red-700 text-sm"
+                      className="text-red-600 hover:text-red-800 text-sm"
                     >
                       Remove
                     </button>
@@ -94,7 +102,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                       clearCart();
                       toast.success("Cart cleared");
                     }}
-                    className="w-full bg-red-100 text-red-600 py-2 rounded-full hover:bg-red-200"
+                    className="w-full bg-red-100 text-red-700 py-2 rounded-full hover:bg-red-300"
                   >
                     Clear Cart
                   </button>

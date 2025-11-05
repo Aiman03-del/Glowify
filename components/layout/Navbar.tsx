@@ -5,14 +5,13 @@ import { motion } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { cart } = useCart();
-  const [logoError, setLogoError] = useState(false);
-  const [logoSrc, setLogoSrc] = useState<string>("/assets/logo.png");
 
   return (
     <>
@@ -23,23 +22,14 @@ export default function Navbar() {
         className="flex justify-between items-center px-6 py-4 bg-white/60 backdrop-blur-md shadow-sm sticky top-0 z-50"
       >
         <Link href="/" className="flex items-center gap-3">
-          {!logoError ? (
-            // try loading logo from /assets (preferred). if it fails, try /logo.png, then fall back to text
-            <img
-              src={logoSrc}
-              alt="Glowify"
-              className="w-20 h-10 object-contain"
-              onError={() => {
-                if (logoSrc === "/assets/logo.png") {
-                  setLogoSrc("/logo.png");
-                } else {
-                  setLogoError(true);
-                }
-              }}
-            />
-          ) : (
-            <span className="text-2xl font-bold text-pink-600">Glowify</span>
-          )}
+          <Image
+            src="/assets/logo.png"
+            alt="Glowify"
+            width={80}
+            height={40}
+            className="object-contain"
+            priority
+          />
         </Link>
 
         <div className="flex items-center gap-6">
@@ -50,6 +40,7 @@ export default function Navbar() {
             About
           </Link>
           <Button
+            aria-label="Open cart"
             size="sm"
             variant="outline"
             onClick={() => setOpen(true)}

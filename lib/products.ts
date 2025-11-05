@@ -10,6 +10,10 @@ export const products = [
       "/assets/serum-2.jpg",
       "/assets/serum-3.jpg",
     ],
+    variants: {
+      size: ["30ml", "50ml", "100ml"],
+      scent: ["unscented", "rose", "citrus"],
+    },
   },
   {
     id: 2,
@@ -18,6 +22,10 @@ export const products = [
     description:
       "Rose Radiance Cream nourishes your skin while giving a subtle rosy glow. Ideal for daily use.",
   images: ["/assets/cream.jpg"],
+  variants: {
+    size: ["50ml", "100ml"],
+    scent: ["rose", "lavender"],
+  },
   },
   {
     id: 3,
@@ -26,6 +34,9 @@ export const products = [
     description:
       "Lush Lips Balm moisturizes and protects your lips, leaving them soft and luscious all day.",
   images: ["/assets/lip-balm.jpg"],
+  variants: {
+    flavor: ["mint", "vanilla", "berry"],
+  },
   },
 ];
 

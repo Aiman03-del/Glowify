@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { products as productList } from "@/lib/products";
 import QuantitySelector from "@/components/QuantitySelector";
@@ -15,6 +16,15 @@ export default function ProductPage() {
   const { addToCart } = useCart();
 
   const [mainImage, setMainImage] = useState<string | undefined>(product?.images?.[0]);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
+    const init: Record<string, string> = {};
+    if (product?.variants) {
+      Object.entries(product.variants).forEach(([k, vals]) => {
+        init[k] = Array.isArray(vals) && vals.length ? String(vals[0]) : "";
+      });
+    }
+    return init;
+  });
 
   if (!product) return <p className="text-center mt-20 text-gray-500">Product not found</p>;
 
@@ -22,26 +32,23 @@ export default function ProductPage() {
     <motion.main className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
       {/* Main Image */}
       <div>
-        <motion.img
-          src={mainImage}
-          alt={product.name}
-          className="w-full rounded-2xl shadow-lg object-cover mb-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+          <Image src={mainImage || "/assets/hero-model.jpg"} alt={product.name} width={800} height={800} className="w-full rounded-2xl shadow-lg object-cover mb-4" />
+        </motion.div>
 
         {/* Thumbnail Gallery */}
         <div className="flex gap-3">
           {product.images.map((img, index) => (
-            <motion.img
-              key={index}
-              src={img}
-              alt={`Thumbnail ${index}`}
-              className={`w-20 h-20 rounded-lg cursor-pointer border ${img === mainImage ? "border-pink-600" : "border-gray-200"}`}
-              onClick={() => setMainImage(img)}
-              whileHover={{ scale: 1.05 }}
-            />
+            <motion.div key={index} whileHover={{ scale: 1.05 }}>
+              <Image
+                src={img}
+                alt={`${product.name} thumbnail ${index + 1}`}
+                width={80}
+                height={80}
+                className={`w-20 h-20 rounded-lg cursor-pointer border ${img === mainImage ? "border-pink-600" : "border-gray-200"}`}
+                onClick={() => setMainImage(img)}
+              />
+            </motion.div>
           ))}
         </div>
       </div>
@@ -54,12 +61,36 @@ export default function ProductPage() {
           <p className="text-2xl font-semibold text-pink-600">${product.price}</p>
         </div>
 
+        {/* Variant selectors */}
+        {product.variants && (
+          <div className="mt-4 space-y-3">
+            {Object.entries(product.variants).map(([key, values]) => (
+              <div key={key}>
+                <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">{key}</label>
+                <select
+                  aria-label={`Select ${key}`}
+                  value={selectedOptions[key]}
+                  onChange={(e) => setSelectedOptions((s) => ({ ...s, [key]: e.target.value }))}
+                  className="border rounded px-3 py-2"
+                >
+                  {(values as string[]).map((val) => (
+                    <option key={val} value={val}>
+                      {val}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Quantity Selector */}
         <QuantitySelector
           onAdd={(qty) => {
-            addToCart({ ...product, quantity: qty });
+            addToCart({ product, quantity: qty, options: selectedOptions });
             toast.success(`${product.name} (${qty}) added to cart`);
           }}
+          buttonAriaLabel={`Add ${product.name} to cart`}
         />
       </div>
 

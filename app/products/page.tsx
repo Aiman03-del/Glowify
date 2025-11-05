@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { products } from "@/lib/products";
 
 export default function Page() {
@@ -13,8 +14,14 @@ export default function Page() {
             className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
           >
             {p.images && p.images[0] && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.images[0]} alt={p.name} className="w-full h-64 object-cover" />
+              <Image
+                src={p.images[0]}
+                alt={p.name}
+                width={800}
+                height={400}
+                loading="lazy"
+                className="w-full h-64 object-cover"
+              />
             )}
 
             <div className="p-6">

@@ -3,6 +3,7 @@
 import React from "react";
 import { useCart } from "@/context/CartContext";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 function formatCurrency(num: number) {
   return `$${num.toFixed(2)}`;
@@ -30,11 +31,14 @@ export default function OrderSummary() {
           <p className="text-sm text-gray-500">No items in cart</p>
         ) : (
           cart.map((it) => (
-            <div key={it.id} className="flex items-center justify-between">
+            <div key={it.cartItemId} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src={it.image || it.images?.[0]} alt={it.name} className="w-12 h-12 rounded object-cover" />
+                <Image src={it.image || it.images?.[0] || "/assets/hero-model.jpg"} alt={it.name} width={48} height={48} loading="lazy" className="w-12 h-12 rounded object-cover" />
                 <div>
                   <p className="text-sm font-medium">{it.name}</p>
+                  {it.options && (
+                    <p className="text-xs text-gray-500">{Object.entries(it.options).map(([k, v]) => `${k}: ${v}`).join(' • ')}</p>
+                  )}
                   <p className="text-xs text-gray-500">Qty: {it.quantity || 1}</p>
                 </div>
               </div>
