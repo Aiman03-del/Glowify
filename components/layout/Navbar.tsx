@@ -63,7 +63,7 @@ export default function Navbar() {
     try {
       await signOut(auth);
       toast.success("Logged out");
-    } catch (e) {
+    } catch {
       toast.error("Failed to log out");
     }
   };

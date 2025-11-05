@@ -13,14 +13,15 @@ interface CompareContextType {
 const CompareContext = createContext<CompareContextType | null>(null);
 
 export function CompareProvider({ children }: { children: React.ReactNode }) {
-  const [selected, setSelected] = useState<number[]>([]);
-
-  useEffect(() => {
+  const [selected, setSelected] = useState<number[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const raw = localStorage.getItem("glowify-compare");
-      if (raw) setSelected(JSON.parse(raw));
-    } catch {}
-  }, []);
+      return raw ? (JSON.parse(raw) as number[]) : [];
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
     try {

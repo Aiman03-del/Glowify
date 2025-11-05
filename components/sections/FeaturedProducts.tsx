@@ -87,7 +87,7 @@ export default function FeaturedProducts() {
 
         {/* Right column: stacked content (scroll normally) */}
         <div className="space-y-8">
-          {products.map((p, index) => (
+          {products.map((p) => (
             <motion.article
               key={p.id}
               data-feature-id

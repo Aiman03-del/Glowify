@@ -35,8 +35,9 @@ export default function SignUpPage() {
       await createUserWithEmailAndPassword(auth, email, password);
       toast.success("Account created successfully");
       router.push("/");
-    } catch (err: any) {
-      setError(err?.message || "Failed to register. Please try again.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to register. Please try again.";
+      setError(message);
       toast.error("Registration failed. Please try again.");
     } finally {
       setLoading(false);

@@ -2,15 +2,25 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-// NOTE: These are public client config values provided by the user.
+// Config is read from public env vars so it can be used on the client
 const firebaseConfig = {
-  apiKey: "AIzaSyCW9KK0f4KnDbhvcBCQJ8cuUz1wZTPCvqE",
-  authDomain: "glowify-b5874.firebaseapp.com",
-  projectId: "glowify-b5874",
-  storageBucket: "glowify-b5874.firebasestorage.app",
-  messagingSenderId: "79301082061",
-  appId: "1:79301082061:web:199c8bb93942ce52d12284",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY as string,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID as string,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET as string,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID as string,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID as string,
 };
+
+// Optional: basic runtime validation to help during local dev
+if (typeof window !== "undefined") {
+  const missing = Object.entries(firebaseConfig)
+    .filter(([, v]) => !v)
+    .map(([k]) => k);
+  if (missing.length) {
+    console.warn("Firebase config missing envs:", missing.join(", "));
+  }
+}
 
 export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);

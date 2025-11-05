@@ -27,9 +27,10 @@ export default function SignInPage() {
   const search = typeof window !== "undefined" ? window.location.search : "";
   const next = search ? new URLSearchParams(search).get("next") : null;
   router.push(next || "/");
-    } catch (err: any) {
-      setError(err?.message || "Failed to log in. Please try again.");
-  toast.error("Login failed. Please try again.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to log in. Please try again.";
+      setError(message);
+      toast.error("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
