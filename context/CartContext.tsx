@@ -33,18 +33,17 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-
-  // Load from localStorage
-  useEffect(() => {
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem("glowify-cart");
-      if (stored) setCart(JSON.parse(stored));
+      return stored ? (JSON.parse(stored) as CartItem[]) : [];
     } catch (e) {
       // ignore parse errors
       console.error("Failed to load cart from localStorage", e);
+      return [];
     }
-  }, []);
+  });
 
   // Save to localStorage
   useEffect(() => {

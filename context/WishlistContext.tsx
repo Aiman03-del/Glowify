@@ -25,19 +25,16 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | null>(null);
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const [wishlist, setWishlist] = useState<Product[]>([]);
-
-  // Load from localStorage on mount
-  useEffect(() => {
+  const [wishlist, setWishlist] = useState<Product[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem("glowify-wishlist");
-      if (stored) {
-        setWishlist(JSON.parse(stored));
-      }
+      return stored ? (JSON.parse(stored) as Product[]) : [];
     } catch (e) {
       console.error("Failed to load wishlist from localStorage", e);
+      return [];
     }
-  }, []);
+  });
 
   // Save to localStorage on change
   useEffect(() => {

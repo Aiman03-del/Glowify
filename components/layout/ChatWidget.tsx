@@ -24,15 +24,14 @@ const faqs = [
 ];
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(false);
-
-  // Optional: if you want to remember last state across refreshes
-  useEffect(() => {
+  const [open, setOpen] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
     try {
-      const remembered = localStorage.getItem("glowify-chat-open");
-      if (remembered === "true") setOpen(false); // start closed by default
-    } catch {}
-  }, []);
+      return localStorage.getItem("glowify-chat-open") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     try {
