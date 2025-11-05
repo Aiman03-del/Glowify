@@ -8,6 +8,7 @@ import Link from "next/link";
 import { products } from "@/lib/products";
 import { toast } from "sonner";
 import { useUI } from "@/context/UIContext";
+import { Eye } from "lucide-react";
 
 export default function FeaturedProducts() {
   const { addToCart } = useCart();
@@ -58,7 +59,7 @@ export default function FeaturedProducts() {
 
   return (
     <section ref={containerRef} className="max-w-7xl mx-auto px-6 py-20">
-      <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Featured Products</h2>
+  <h2 className="f-text-h2 font-bold text-center mb-8 text-gray-800">Featured Products</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left column: sticky image for active item */}
@@ -96,7 +97,17 @@ export default function FeaturedProducts() {
               transition={{ duration: 0.5 }}
               className="bg-white rounded-2xl shadow-lg p-6"
             >
-              <h3 className="text-xl font-semibold mb-2">{p.name}</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-semibold">{p.name}</h3>
+                <Link
+                  href={`/products/${p.id}`}
+                  aria-label={`View details: ${p.name}`}
+                  title="View details"
+                  className="p-1 rounded-full text-pink-600 hover:text-pink-700 hover:bg-pink-50"
+                >
+                  <Eye className="w-5 h-5" />
+                </Link>
+              </div>
               <p className="text-pink-600 font-bold mb-2">${p.price}</p>
               <p className="text-gray-600 mb-4">{p.description}</p>
 
@@ -113,9 +124,7 @@ export default function FeaturedProducts() {
                   Add to Cart
                 </button>
 
-                <Link href={`/products/${p.id}`} className="text-sm underline text-pink-600 hover:text-pink-700">
-                  View Details
-                </Link>
+                {/* Removed large text link; eye icon near the title now handles navigation */}
               </div>
             </motion.article>
           ))}

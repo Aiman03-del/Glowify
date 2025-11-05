@@ -4,6 +4,7 @@ import { UIProvider } from "@/context/UIContext";
 import PageTransition from "@/components/layout/PageTransition";
 import Footer from "@/components/layout/Footer";
 import ClientInjections from "@/components/layout/ClientInjections";
+import { CompareProvider } from "@/context/CompareContext";
 import Navbar from "@/components/layout/Navbar";
 import "./globals.css";
 import { ReactNode } from "react";
@@ -26,13 +27,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <UIProvider>
           <CartProvider>
             <WishlistProvider>
-              <Navbar />
-              {/* Sonner Toaster (positioned bottom-left) */}
-              <Toaster position="bottom-left" />
-              {/* Client-only injections (e.g., newsletter modal) */}
-              <ClientInjections />
-              <PageTransition>{children}</PageTransition>
-              <Footer />
+              <CompareProvider>
+                <Navbar />
+                {/* Spacer to offset fixed navbar height */}
+                <div aria-hidden className="h-20 md:h-24" />
+                {/* Sonner Toaster (positioned bottom-left) */}
+                <Toaster position="bottom-left" />
+                {/* Client-only injections (e.g., newsletter modal) */}
+                <ClientInjections />
+                <PageTransition>{children}</PageTransition>
+                <Footer />
+              </CompareProvider>
             </WishlistProvider>
           </CartProvider>
         </UIProvider>

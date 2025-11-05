@@ -143,3 +143,24 @@
 .input-bordered {
   @apply border-gray-200;
 }
+
+/* Fluid typography utility classes */
+.f-text-hero {
+  font-size: clamp(2.5rem, 1.5rem + 4vw, 4rem);
+  line-height: 1.1;
+}
+.f-text-h1 {
+  font-size: clamp(2rem, 1.2rem + 2.5vw, 3rem);
+  line-height: 1.15;
+}
+.f-text-h2 {
+  font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.25rem);
+  line-height: 1.2;
+}
+.f-text-h3 {
+  font-size: clamp(1.25rem, 1.05rem + 1.2vw, 1.75rem);
+  line-height: 1.25;
+}
+.f-text-body-lg {
+  font-size: clamp(1rem, 0.95rem + 0.6vw, 1.25rem);
+}

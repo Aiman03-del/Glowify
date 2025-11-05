@@ -16,6 +16,7 @@ import { useUI } from "@/context/UIContext";
 import { reviewsByProduct } from "@/lib/reviews";
 import ProductReviewModal from "@/components/sections/ProductReviewModal";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import { useCompare } from "@/context/CompareContext";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -24,6 +25,7 @@ export default function ProductPage() {
   const { addToWishlist, removeFromWishlist, isWishlisted } = useWishlist();
   const { openCart } = useUI();
   const [reviewsOpen, setReviewsOpen] = useState(false);
+  const { isSelected: isCompareSelected, toggle: toggleCompare } = useCompare();
 
   const [mainImage, setMainImage] = useState<string | undefined>(product?.images?.[0]);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -82,7 +84,7 @@ export default function ProductPage() {
       <div className="flex flex-col justify-between">
         <div className="space-y-4">
           <div className="flex justify-between items-start">
-            <h1 className="text-4xl font-bold text-pink-600">{product.name}</h1>
+            <h1 className="f-text-h1 font-bold text-pink-600">{product.name}</h1>
             <Button
               size="icon"
               variant="ghost"
@@ -151,6 +153,14 @@ export default function ProductPage() {
             onClick={() => setReviewsOpen(true)}
           >
             See Reviews
+          </Button>
+          <Button
+            variant="link"
+            className={`p-0 ml-4 ${isCompareSelected(product.id) ? "text-green-600 hover:text-green-700" : "text-pink-600 hover:text-pink-700"}`}
+            aria-label={`${isCompareSelected(product.id) ? "Remove from" : "Add to"} compare: ${product.name}`}
+            onClick={() => toggleCompare(product.id)}
+          >
+            {isCompareSelected(product.id) ? "Added to Compare" : "Add to Compare"}
           </Button>
         </div>
       </div>

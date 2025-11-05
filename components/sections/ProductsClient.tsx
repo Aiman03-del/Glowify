@@ -8,6 +8,8 @@ import ProductFilterSidebar, { type Filters } from "@/components/sections/Produc
 import { useSearchParams, useRouter } from "next/navigation";
 import ProductReviewModal from "@/components/sections/ProductReviewModal";
 import { reviewsByProduct } from "@/lib/reviews";
+import { useCompare } from "@/context/CompareContext";
+import { Eye } from "lucide-react";
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
@@ -78,6 +80,8 @@ export default function ProductsClient() {
     setSearch("");
   };
 
+  const { selected: compareSelected, toggle: toggleCompare, isSelected: isCompareSelected } = useCompare();
+
   return (
     <>
       {/* Reviews Modal */}
@@ -113,7 +117,7 @@ export default function ProductsClient() {
           {filtered.map((p) => (
             <article
               key={p.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col h-full"
             >
               {p.images && p.images[0] && (
                 <Image
@@ -126,30 +130,41 @@ export default function ProductsClient() {
                 />
               )}
 
-              <div className="p-6">
-                <h2 className="text-lg font-semibold mb-1">{p.name}</h2>
+              <div className="p-6 flex flex-col flex-1">
+                <div className="flex items-center justify-between mb-2 min-h-7">
+                  <h2 className="text-lg font-semibold">{p.name}</h2>
+                  <Link
+                    href={`/products/${p.id}`}
+                    aria-label={`View details: ${p.name}`}
+                    title="View details"
+                    className="p-1 rounded-full text-pink-600 hover:text-pink-700 hover:bg-pink-50"
+                  >
+                    <Eye className="w-5 h-5" />
+                  </Link>
+                </div>
                 <p className="text-pink-600 font-bold mb-2">${p.price}</p>
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 mb-2 min-h-6">
                   {p.category && <span className="px-2 py-0.5 rounded-full bg-gray-100">{p.category}</span>}
                   {p.skinTypes?.map((s) => (
                     <span key={s} className="px-2 py-0.5 rounded-full bg-gray-100">{s}</span>
                   ))}
                 </div>
-                <p className="text-sm text-gray-600 mb-4">{p.description}</p>
+                <p className="text-sm text-gray-600 mb-4 min-h-14">{p.description}</p>
 
-                <div className="flex items-center justify-between">
-                  <Link
-                    href={`/products/${p.id}`}
-                    className="text-sm underline text-pink-600 hover:text-pink-700"
-                  >
-                    View details
-                  </Link>
+                <div className="mt-auto flex items-center justify-end gap-4">
                   <button
                     className="text-sm text-pink-600 hover:text-pink-700 underline"
                     aria-label={`See reviews for ${p.name}`}
                     onClick={() => setSelected(p)}
                   >
                     See Reviews
+                  </button>
+                  <button
+                    className={`text-sm underline ${isCompareSelected(p.id) ? "text-green-600 hover:text-green-700" : "text-pink-600 hover:text-pink-700"}`}
+                    aria-label={`${isCompareSelected(p.id) ? "Remove from" : "Add to"} compare: ${p.name}`}
+                    onClick={() => toggleCompare(p.id)}
+                  >
+                    {isCompareSelected(p.id) ? "Added" : "Compare"}
                   </button>
                 </div>
               </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Heart } from "lucide-react";
+import { ShoppingBag, Heart, Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import CartDrawer from "./CartDrawer";
@@ -15,6 +16,7 @@ export default function Navbar() {
   const { openCart } = useUI();
   const [visible, setVisible] = useState(true);
   const lastY = useRef(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -40,6 +42,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close on Escape for mobile menu
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   return (
     <>
       <nav
@@ -59,7 +70,8 @@ export default function Navbar() {
           />
         </Link>
 
-          <div className="flex items-center gap-4 md:gap-6">
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-4 md:gap-6">
             <Link href="/" className="hover:text-pink-600 transition">
               Home
             </Link>
@@ -96,8 +108,74 @@ export default function Navbar() {
             )}
           </Button>
           </div>
+
+          {/* Mobile actions */}
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMobileOpen((v) => !v)}
+              className="p-2 rounded-md border text-pink-600 border-pink-600 hover:bg-pink-600 hover:text-white transition"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </nav>
+
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 bg-black z-40"
+            />
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "tween" }}
+              className="fixed top-0 left-0 h-full w-72 bg-white z-50 shadow-2xl p-5 flex flex-col"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile navigation"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <span className="font-semibold text-pink-600">Glowify</span>
+                <button aria-label="Close menu" onClick={() => setMobileOpen(false)} className="p-1 rounded hover:bg-gray-100">
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+
+              <nav className="flex-1 space-y-2">
+                <Link href="/" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">Home</Link>
+                <Link href="/products" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">Products</Link>
+                <Link href="/favorites" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">Favorites</Link>
+                <Link href="/about" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">About</Link>
+              </nav>
+
+              <div className="mt-auto space-y-2">
+                <button
+                  onClick={() => { setMobileOpen(false); openCart(); }}
+                  className="w-full border border-pink-600 text-pink-600 rounded-full px-4 py-2 hover:bg-pink-600 hover:text-white transition"
+                >
+                  Open Cart {cart.length > 0 ? `(${cart.length})` : ""}
+                </button>
+                <Link
+                  href="/favorites"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full text-center border border-pink-600 text-pink-600 rounded-full px-4 py-2 hover:bg-pink-600 hover:text-white transition block"
+                >
+                  Favorites {wishlist.length > 0 ? `(${wishlist.length})` : ""}
+                </Link>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       <CartDrawer />
     </>
