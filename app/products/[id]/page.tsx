@@ -5,15 +5,19 @@ import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
-import { products as productList } from "@/lib/products";
+import { products as productList, type Product } from "@/lib/products";
 import QuantitySelector from "@/components/QuantitySelector";
 import RelatedProducts from "@/components/sections/RelatedProducts";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
+import { useWishlist } from "@/context/WishlistContext";
 
 export default function ProductPage() {
   const { id } = useParams();
-  const product = productList.find((p) => p.id === Number(id));
+  const product: Product | undefined = productList.find((p) => p.id === Number(id));
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isWishlisted } = useWishlist();
 
   const [mainImage, setMainImage] = useState<string | undefined>(product?.images?.[0]);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -56,7 +60,18 @@ export default function ProductPage() {
       {/* Product Details */}
       <div className="flex flex-col justify-between">
         <div className="space-y-4">
-          <h1 className="text-4xl font-bold text-pink-600">{product.name}</h1>
+          <div className="flex justify-between items-start">
+            <h1 className="text-4xl font-bold text-pink-600">{product.name}</h1>
+            <Button
+              size="icon"
+              variant="ghost"
+              className={`text-red-500 ${isWishlisted(product.id) ? "fill-current" : ""}`}
+              onClick={() => (isWishlisted(product.id) ? removeFromWishlist(product.id) : addToWishlist(product as Product))}
+              aria-label={isWishlisted(product.id) ? "Remove from favorites" : "Add to favorites"}
+            >
+              <Heart className="w-8 h-8" />
+            </Button>
+          </div>
           <p className="text-gray-600">{product.description}</p>
           <p className="text-2xl font-semibold text-pink-600">${product.price}</p>
         </div>
