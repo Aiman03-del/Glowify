@@ -1,3 +1,5 @@
+"use client";
+
 // Firebase client initialization
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -22,5 +24,15 @@ if (typeof window !== "undefined") {
   }
 }
 
-export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-export const auth = getAuth(app);
+// Ensure we only initialize on the client
+let appInstance = getApps().length ? getApp() : undefined;
+if (!appInstance) {
+  // In extremely rare tooling paths, guard against non-browser init
+  if (typeof window !== "undefined") {
+    appInstance = initializeApp(firebaseConfig);
+  }
+}
+
+// Export typed singletons for client usage
+export const app = appInstance as ReturnType<typeof initializeApp>;
+export const auth = typeof window !== "undefined" && app ? getAuth(app) : (undefined as unknown as ReturnType<typeof getAuth>);
