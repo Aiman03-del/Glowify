@@ -7,9 +7,11 @@ import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { products } from "@/lib/products";
 import { toast } from "sonner";
+import { useUI } from "@/context/UIContext";
 
 export default function FeaturedProducts() {
   const { addToCart } = useCart();
+  const { openCart } = useUI();
   const containerRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -102,8 +104,9 @@ export default function FeaturedProducts() {
                 <button
                   aria-label={`Add ${p.name} to cart`}
                   onClick={() => {
-                    addToCart(p);
+                    addToCart({ product: p, quantity: 1 });
                     toast.success(`${p.name} added to cart`);
+                    openCart();
                   }}
                   className="bg-pink-600 text-white px-4 py-2 rounded-full hover:bg-pink-700 transition"
                 >

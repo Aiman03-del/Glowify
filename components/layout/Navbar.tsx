@@ -1,27 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ShoppingBag, Heart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useUI } from "@/context/UIContext";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
   const { cart } = useCart();
   const { wishlist } = useWishlist();
+  const { openCart } = useUI();
+  const [visible, setVisible] = useState(true);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastY.current;
+      const threshold = 8; // ignore tiny scrolls
+      if (Math.abs(delta) > threshold) {
+        if (y <= 0) {
+          setVisible(true);
+        } else if (delta > 0) {
+          // scrolling down -> hide
+          setVisible(false);
+        } else {
+          // scrolling up -> show
+          setVisible(true);
+        }
+        lastY.current = y;
+      }
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex justify-between items-center px-6 py-4 bg-white/60 backdrop-blur-md shadow-sm sticky top-0 z-50"
+      <nav
+        className={`fixed z-50 left-1/2 -translate-x-1/2 top-3 w-[calc(100%-0.5rem)] max-w-7xl transition-transform duration-300 ${
+          visible ? "translate-y-0" : "-translate-y-full"
+        }`}
       >
+        <div className="flex justify-between items-center px-5 py-3 bg-white/70 backdrop-blur-md shadow-md rounded-full border border-white/60">
         <Link href="/" className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -33,7 +59,10 @@ export default function Navbar() {
           />
         </Link>
 
-        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            <Link href="/" className="hover:text-pink-600 transition">
+              Home
+            </Link>
           <Link href="/products" className="hover:text-pink-600 transition">
             Products
           </Link>
@@ -56,7 +85,7 @@ export default function Navbar() {
             aria-label="Open cart"
             size="sm"
             variant="outline"
-            onClick={() => setOpen(true)}
+            onClick={openCart}
             className="relative border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white transition"
           >
             <ShoppingBag className="w-4 h-4" />
@@ -66,10 +95,11 @@ export default function Navbar() {
               </span>
             )}
           </Button>
+          </div>
         </div>
-      </motion.nav>
+      </nav>
 
-      <CartDrawer open={open} onClose={() => setOpen(false)} />
+      <CartDrawer />
     </>
   );
 }
