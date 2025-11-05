@@ -18,6 +18,8 @@ export default function ProductsClient() {
 
   const allCategories = useMemo(() => Array.from(new Set(products.map(p => p.category).filter(Boolean))) as string[], []);
   const allSkinTypes = useMemo(() => Array.from(new Set(products.flatMap(p => p.skinTypes ?? []))), []);
+  const allTags = useMemo(() => Array.from(new Set(products.flatMap(p => p.tags ?? []))), []);
+  const allIngredients = useMemo(() => Array.from(new Set(products.flatMap(p => p.ingredients ?? []))), []);
 
   const priceBounds = useMemo(() => {
     const prices = products.map(p => p.price);
@@ -28,10 +30,12 @@ export default function ProductsClient() {
   const [filters, setFilters] = useState<Filters>(() => {
     const cats = new Set((searchParams.get("cat") || "").split(",").filter(Boolean));
     const skins = new Set((searchParams.get("skin") || "").split(",").filter(Boolean));
+    const tags = new Set((searchParams.get("tag") || "").split(",").filter(Boolean));
+    const ings = new Set((searchParams.get("ing") || "").split(",").filter(Boolean));
     const [minS, maxS] = (searchParams.get("price") || "").split("-");
     const min = Number(minS) || priceBounds.min;
     const max = Number(maxS) || priceBounds.max;
-    return { categories: cats, skinTypes: skins, price: { min, max } };
+    return { categories: cats, skinTypes: skins, tags, ingredients: ings, price: { min, max } } as Filters;
   });
 
   // push query updates when filters/search change (debounced for search)
@@ -44,6 +48,8 @@ export default function ProductsClient() {
       if (filters.price.min !== priceBounds.min || filters.price.max !== priceBounds.max) {
         params.set("price", `${filters.price.min}-${filters.price.max}`);
       }
+      if (filters.tags.size) params.set("tag", Array.from(filters.tags).join(","));
+      if (filters.ingredients.size) params.set("ing", Array.from(filters.ingredients).join(","));
       router.push(`/products${params.toString() ? `?${params.toString()}` : ""}`);
     }, 250);
     return () => clearTimeout(t);
@@ -68,6 +74,20 @@ export default function ProductsClient() {
         if (!hasAny) return false;
       }
 
+      // tags (match any within group)
+      if (filters.tags.size) {
+        const tags = new Set(p.tags ?? []);
+        const hasAny = Array.from(filters.tags).some((t) => tags.has(t));
+        if (!hasAny) return false;
+      }
+
+      // ingredients (match any within group)
+      if (filters.ingredients.size) {
+        const ings = new Set(p.ingredients ?? []);
+        const hasAny = Array.from(filters.ingredients).some((i) => ings.has(i));
+        if (!hasAny) return false;
+      }
+
       // price
       if (p.price < filters.price.min || p.price > filters.price.max) return false;
 
@@ -76,7 +96,7 @@ export default function ProductsClient() {
   }, [search, filters]);
 
   const clearFilters = () => {
-    setFilters({ categories: new Set(), skinTypes: new Set(), price: { ...priceBounds } });
+  setFilters({ categories: new Set(), skinTypes: new Set(), tags: new Set(), ingredients: new Set(), price: { ...priceBounds } } as Filters);
     setSearch("");
   };
 
@@ -107,6 +127,8 @@ export default function ProductsClient() {
         <ProductFilterSidebar
           allCategories={allCategories}
           allSkinTypes={allSkinTypes}
+          allTags={allTags}
+          allIngredients={allIngredients}
           priceBounds={priceBounds}
           filters={filters}
           onChange={setFilters}
@@ -147,6 +169,9 @@ export default function ProductsClient() {
                   {p.category && <span className="px-2 py-0.5 rounded-full bg-gray-100">{p.category}</span>}
                   {p.skinTypes?.map((s) => (
                     <span key={s} className="px-2 py-0.5 rounded-full bg-gray-100">{s}</span>
+                  ))}
+                  {p.tags?.map((t) => (
+                    <span key={t} className="px-2 py-0.5 rounded-full bg-pink-50 text-pink-700 border border-pink-100">{t}</span>
                   ))}
                 </div>
                 <p className="text-sm text-gray-600 mb-4 min-h-14">{p.description}</p>
