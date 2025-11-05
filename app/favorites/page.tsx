@@ -5,11 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
+import RequireAuth from "@/components/auth/RequireAuth";
 
 export default function FavoritesPage() {
   const { wishlist, removeFromWishlist } = useWishlist();
 
   return (
+    <RequireAuth>
     <main className="max-w-7xl mx-auto px-6 py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-800">My Favorites</h1>
@@ -70,5 +72,6 @@ export default function FavoritesPage() {
         </div>
       )}
     </main>
+    </RequireAuth>
   );
 }
