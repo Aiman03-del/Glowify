@@ -73,6 +73,83 @@ export default function AboutPage() {
           <p className="text-gray-700">Your feedback shapes our roadmap. Tell us what you want to see next — we’re listening.</p>
         </div>
       </section>
+
+      {/* Values */}
+      <section className="mt-16">
+        <h2 className="f-text-h2 font-bold text-gray-800 mb-6">Our Values</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-2xl border p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-800 mb-2">Transparency</h3>
+            <p className="text-gray-700">Clear labels, clear intentions — we share what’s inside and why it’s there.</p>
+          </div>
+          <div className="bg-white rounded-2xl border p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-800 mb-2">Kindness</h3>
+            <p className="text-gray-700">To skin and planet — gentle formulas and mindful packaging choices.</p>
+          </div>
+          <div className="bg-white rounded-2xl border p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-800 mb-2">Results</h3>
+            <p className="text-gray-700">We aim for meaningful, consistent results you can feel and see.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="mt-16">
+        <h2 className="f-text-h2 font-bold text-gray-800 mb-6">Meet the Team</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {[{ name: "Aiman Khan", role: "Founder & CEO" }, { name: "Rina Nahar", role: "Formulation Lead" }, { name: "Samir Sayeed", role: "Community & Care" }].map((t) => (
+            <div key={t.name} className="bg-white rounded-2xl border p-6 shadow-sm text-center">
+              <div className="mx-auto mb-3 w-20 h-20 rounded-full bg-pink-100 text-pink-700 flex items-center justify-center text-xl font-bold">
+                {t.name.split(" ").map((p) => p[0]).slice(0,2).join("")}
+              </div>
+              <div className="font-semibold text-gray-800">{t.name}</div>
+              <div className="text-sm text-gray-600">{t.role}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="mt-16">
+        <h2 className="f-text-h2 font-bold text-gray-800 mb-6">Our Journey</h2>
+        <ol className="relative border-l pl-6">
+          {[{ year: "2023", text: "Glowify idea and first lab samples." }, { year: "2024", text: "Beta community and first three products." }, { year: "2025", text: "Full store launch with serums and cleansers." }, { year: "2026", text: "Expanding routines and international shipping." }].map((i) => (
+            <li key={i.year} className="mb-6">
+              <span className="absolute -left-2 mt-1 w-3 h-3 rounded-full bg-pink-600" aria-hidden />
+              <div className="text-sm text-gray-500">{i.year}</div>
+              <div className="text-gray-800">{i.text}</div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* FAQ */}
+      <section className="mt-16">
+        <h2 className="f-text-h2 font-bold text-gray-800 mb-6">FAQ</h2>
+        <div className="space-y-3">
+          {[
+            { q: "Are your products suitable for sensitive skin?", a: "Yes. We formulate for tolerance and recommend patch testing if you’re reactive." },
+            { q: "Do you test on animals?", a: "No. We are committed to cruelty-free development." },
+            { q: "Where are you based?", a: "We’re based in Bangladesh with partners across the region." },
+          ].map((f) => (
+            <details key={f.q} className="rounded-xl border p-4 bg-white">
+              <summary className="cursor-pointer font-medium text-gray-800 list-none">{f.q}</summary>
+              <p className="mt-2 text-gray-700 text-sm">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="mt-16">
+        <div className="rounded-2xl border shadow-sm bg-pink-50 p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="f-text-h3 font-semibold text-pink-700">Ready to build your routine?</h3>
+            <p className="text-gray-700">Explore our best-sellers and find your new essentials.</p>
+          </div>
+          <Link href="/products" className="bg-pink-600 text-white px-5 py-2 rounded-full hover:bg-pink-700">Shop Now</Link>
+        </div>
+      </section>
     </main>
   );
 }

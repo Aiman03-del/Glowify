@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ShoppingBag, Heart, Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/context/CartContext";
@@ -11,12 +12,19 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useUI } from "@/context/UIContext";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const { cart } = useCart();
   const { wishlist } = useWishlist();
   const { openCart } = useUI();
   const [visible, setVisible] = useState(true);
   const lastY = useRef(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isActive = (href: string) => {
+    if (!pathname) return false;
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -72,41 +80,38 @@ export default function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-4 md:gap-6">
-            <Link href="/" className="hover:text-pink-600 transition">
-              Home
+            <Link href="/" className={`transition ${isActive("/") ? "text-pink-700 " : "hover:text-pink-600"}`}>Home</Link>
+            <Link href="/about" className={`transition ${isActive("/about") ? "text-pink-700 " : "hover:text-pink-600"}`}>About</Link>
+            <Link href="/products" className={`transition ${isActive("/products") ? "text-pink-700 " : "hover:text-pink-600"}`}>Products</Link>
+            <Link href="/contact" className={`transition ${isActive("/contact") ? "text-pink-700 " : "hover:text-pink-600"}`}>Contact</Link>
+
+            {/* Icon-only actions */}
+            <Link
+              href="/favorites"
+              aria-label="Open favorites"
+              aria-current={isActive("/favorites") ? "page" : undefined}
+              className={`relative transition ${isActive("/favorites") ? "text-pink-700" : "text-pink-600 hover:text-pink-700"}`}
+            >
+              <Heart className="w-5 h-5" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-2 bg-pink-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                  {wishlist.length}
+                </span>
+              )}
             </Link>
-          <Link href="/products" className="hover:text-pink-600 transition">
-            Products
-          </Link>
-          <Link href="/about" className="hover:text-pink-600 transition">
-            About
-          </Link>
-          <Link
-            href="/favorites"
-            aria-label="Open favorites"
-            className="relative rounded-md border border-pink-600 text-pink-600 px-3 py-1.5 hover:bg-pink-600 hover:text-white transition flex items-center"
-          >
-            <Heart className="w-4 h-4" />
-            {wishlist.length > 0 && (
-              <span className="absolute -top-1 -right-2 bg-pink-600 text-white text-xs px-1.5 py-0.5 rounded-full">
-                {wishlist.length}
-              </span>
-            )}
-          </Link>
-          <Button
-            aria-label="Open cart"
-            size="sm"
-            variant="outline"
-            onClick={openCart}
-            className="relative border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white transition"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            {cart.length > 0 && (
-              <span className="absolute -top-1 -right-2 bg-pink-600 text-white text-xs px-1.5 py-0.5 rounded-full">
-                {cart.length}
-              </span>
-            )}
-          </Button>
+
+            <button
+              aria-label="Open cart"
+              onClick={openCart}
+              className="relative text-pink-600 hover:text-pink-700 transition"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {cart.length > 0 && (
+                <span className="absolute -top-1 -right-2 bg-pink-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                  {cart.length}
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Mobile actions */}
@@ -151,10 +156,11 @@ export default function Navbar() {
               </div>
 
               <nav className="flex-1 space-y-2">
-                <Link href="/" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">Home</Link>
-                <Link href="/products" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">Products</Link>
-                <Link href="/favorites" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">Favorites</Link>
-                <Link href="/about" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded hover:bg-gray-100">About</Link>
+                <Link href="/" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Home</Link>
+                <Link href="/about" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/about") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>About</Link>
+                <Link href="/products" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/products") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Products</Link>
+                <Link href="/contact" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/contact") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Contact</Link>
+                <Link href="/favorites" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/favorites") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Favorites</Link>
               </nav>
 
               <div className="mt-auto space-y-2">

@@ -42,16 +42,18 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button: icon-only by default, expands on hover/focus */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Chat with Glowify"
-        className="fixed bottom-4 right-4 z-30 rounded-full bg-pink-600 text-white shadow-lg px-4 py-3 flex items-center gap-2 hover:bg-pink-700"
+        className="group fixed bottom-4 right-4 z-30 rounded-full bg-pink-600 text-white shadow-lg h-12 w-12 overflow-hidden flex items-center justify-center transition-all duration-300 hover:w-48 focus:w-48 hover:bg-pink-700 focus:bg-pink-700"
       >
-        <MessageCircle className="w-5 h-5" />
-        <span className="hidden sm:inline">Chat with Glowify</span>
-        <span className="sm:hidden" aria-hidden>
-          💬
+  <MessageCircle className="w-5 h-5 shrink-0 text-white" aria-hidden />
+        <span
+          className="ml-2 opacity-0 translate-x-2 whitespace-nowrap transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-focus:opacity-100 group-focus:translate-x-0"
+          aria-hidden
+        >
+          Chat with Glowify
         </span>
       </button>
 
