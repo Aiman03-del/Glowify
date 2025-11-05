@@ -18,10 +18,10 @@ const testimonials: Testimonial[] = [
   { name: "Tanvir", text: "Berry flavor balm is perfect — not sticky.", rating: 4 },
 ];
 
-function Row({ reverse = false }: { reverse?: boolean }) {
-  // Duplicate items to create a seamless loop
-  const items = [...testimonials, ...testimonials];
-  const distance = (items.length / 2) * 280; // approximate card width + gap
+function Row({ items, reverse = false }: { items: Testimonial[]; reverse?: boolean }) {
+  // Duplicate visible items to create a seamless loop
+  const loop = [...items, ...items];
+  const distance = items.length * 280; // approximate single-set width
   return (
     <div className="overflow-hidden">
       <motion.div
@@ -32,7 +32,7 @@ function Row({ reverse = false }: { reverse?: boolean }) {
         transition={{ duration: 30, ease: "linear", repeat: Infinity }}
         style={{ willChange: "transform" }}
       >
-        {items.map((t, i) => (
+        {loop.map((t, i) => (
           <figure
             key={i}
             className="min-w-[260px] max-w-[260px] bg-white rounded-2xl shadow p-4 border"
@@ -52,13 +52,23 @@ function Row({ reverse = false }: { reverse?: boolean }) {
 }
 
 export default function Testimonials() {
+  // Ensure equal number of cards in top and bottom rows
+  const base = [...testimonials];
+  if (base.length % 2 !== 0) {
+    // duplicate last item to make even count
+    base.push(base[base.length - 1]);
+  }
+  const half = base.length / 2;
+  const topItems = base.slice(0, half);
+  const bottomItems = base.slice(half);
+
   return (
     <section className="max-w-7xl mx-auto px-6 py-16">
       <h2 className="f-text-h2 font-bold text-center mb-8 text-gray-800">What our customers say</h2>
       <div className="space-y-6">
-        <Row />
+        <Row items={topItems} />
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          <Row reverse />
+          <Row items={bottomItems} reverse />
         </motion.div>
       </div>
     </section>
