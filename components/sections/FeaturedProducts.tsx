@@ -62,8 +62,8 @@ export default function FeaturedProducts() {
   <h2 className="f-text-h2 font-bold text-center mb-8 text-gray-800">Featured Products</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Left column: sticky image for active item */}
-  <aside className="sticky top-24 h-[60vh] flex items-center justify-center order-first md:order-0">
+        {/* Left column (lg only): sticky image for active item */}
+        <aside className="hidden md:flex sticky top-24 h-[60vh] items-center justify-center order-first md:order-0">
             <div className="w-80 h-80 bg-white rounded-2xl shadow-lg flex items-center justify-center overflow-hidden">
               <motion.div
                 key={activeIndex}
@@ -97,6 +97,19 @@ export default function FeaturedProducts() {
               transition={{ duration: 0.5 }}
               className="bg-white rounded-2xl shadow-lg p-6"
             >
+              {/* Mobile image (only small screens) */}
+              {p.images?.[0] && (
+                <div className="md:hidden -mx-6 -mt-6 mb-4">
+                  <Image
+                    src={p.images[0]}
+                    alt={p.name}
+                    width={800}
+                    height={480}
+                    loading="lazy"
+                    className="w-full h-56 object-cover"
+                  />
+                </div>
+              )}
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-xl font-semibold">{p.name}</h3>
                 <Link
