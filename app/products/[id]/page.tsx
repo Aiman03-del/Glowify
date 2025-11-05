@@ -84,7 +84,7 @@ export default function ProductPage() {
       <div className="flex flex-col justify-between">
         <div className="space-y-4">
           <div className="flex justify-between items-start">
-            <h1 className="text-4xl font-bold text-pink-600">{product.name}</h1>
+            <h1 className="f-text-h1 font-bold text-pink-600">{product.name}</h1>
             <Button
               size="icon"
               variant="ghost"

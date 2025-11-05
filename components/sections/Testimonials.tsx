@@ -53,7 +53,7 @@ function Row({ reverse = false }: { reverse?: boolean }) {
 export default function Testimonials() {
   return (
     <section className="max-w-7xl mx-auto px-6 py-16">
-      <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">What our customers say</h2>
+      <h2 className="f-text-h2 font-bold text-center mb-8 text-gray-800">What our customers say</h2>
       <div className="space-y-6">
         <Row />
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>

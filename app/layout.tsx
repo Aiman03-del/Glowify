@@ -29,6 +29,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <WishlistProvider>
               <CompareProvider>
                 <Navbar />
+                {/* Spacer to offset fixed navbar height */}
+                <div aria-hidden className="h-20 md:h-24" />
                 {/* Sonner Toaster (positioned bottom-left) */}
                 <Toaster position="bottom-left" />
                 {/* Client-only injections (e.g., newsletter modal) */}

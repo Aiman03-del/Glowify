@@ -12,10 +12,10 @@ export default function Hero() {
         transition={{ duration: 0.8 }}
         className="flex-1"
       >
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+        <h1 className="f-text-hero font-bold text-gray-800 mb-6">
           Let Your <span className="text-pink-600">Beauty</span> Glow Naturally
         </h1>
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="f-text-body-lg text-gray-600 mb-8">
           Explore our exclusive collection of skincare and beauty essentials crafted with love and care.
         </p>
         <Button className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 text-lg rounded-full">
