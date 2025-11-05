@@ -8,6 +8,7 @@ import ProductFilterSidebar, { type Filters } from "@/components/sections/Produc
 import { useSearchParams, useRouter } from "next/navigation";
 import ProductReviewModal from "@/components/sections/ProductReviewModal";
 import { reviewsByProduct } from "@/lib/reviews";
+import { useCompare } from "@/context/CompareContext";
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
@@ -77,6 +78,8 @@ export default function ProductsClient() {
     setFilters({ categories: new Set(), skinTypes: new Set(), price: { ...priceBounds } });
     setSearch("");
   };
+
+  const { selected: compareSelected, toggle: toggleCompare, isSelected: isCompareSelected } = useCompare();
 
   return (
     <>
@@ -150,6 +153,13 @@ export default function ProductsClient() {
                     onClick={() => setSelected(p)}
                   >
                     See Reviews
+                  </button>
+                  <button
+                    className={`text-sm underline ${isCompareSelected(p.id) ? "text-green-600 hover:text-green-700" : "text-pink-600 hover:text-pink-700"}`}
+                    aria-label={`${isCompareSelected(p.id) ? "Remove from" : "Add to"} compare: ${p.name}`}
+                    onClick={() => toggleCompare(p.id)}
+                  >
+                    {isCompareSelected(p.id) ? "Added" : "Compare"}
                   </button>
                 </div>
               </div>
