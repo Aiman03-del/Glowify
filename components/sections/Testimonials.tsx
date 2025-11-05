@@ -21,13 +21,14 @@ const testimonials: Testimonial[] = [
 function Row({ reverse = false }: { reverse?: boolean }) {
   // Duplicate items to create a seamless loop
   const items = [...testimonials, ...testimonials];
+  const distance = (items.length / 2) * 280; // approximate card width + gap
   return (
     <div className="overflow-hidden">
       <motion.div
         aria-label="Customer testimonials marquee"
         className="flex gap-4"
         initial={{ x: 0 }}
-        animate={{ x: reverse ? 0 : -((items.length / 2) * 280) }}
+        animate={{ x: reverse ? distance : -distance }}
         transition={{ duration: 30, ease: "linear", repeat: Infinity }}
         style={{ willChange: "transform" }}
       >

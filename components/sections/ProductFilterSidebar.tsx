@@ -5,12 +5,16 @@ import { useMemo } from "react";
 export type Filters = {
   categories: Set<string>;
   skinTypes: Set<string>;
+  tags: Set<string>;
+  ingredients: Set<string>;
   price: { min: number; max: number };
 };
 
 interface Props {
   allCategories: string[];
   allSkinTypes: string[];
+  allTags: string[];
+  allIngredients: string[];
   priceBounds: { min: number; max: number };
   filters: Filters;
   onChange: (next: Filters) => void;
@@ -20,6 +24,8 @@ interface Props {
 export default function ProductFilterSidebar({
   allCategories,
   allSkinTypes,
+  allTags,
+  allIngredients,
   priceBounds,
   filters,
   onChange,
@@ -27,6 +33,8 @@ export default function ProductFilterSidebar({
 }: Props) {
   const sortedCats = useMemo(() => [...allCategories].sort(), [allCategories]);
   const sortedSkins = useMemo(() => [...allSkinTypes].sort(), [allSkinTypes]);
+  const sortedTags = useMemo(() => [...allTags].sort(), [allTags]);
+  const sortedIngs = useMemo(() => [...allIngredients].sort(), [allIngredients]);
 
   function toggleInSet(set: Set<string>, value: string) {
     const next = new Set(set);
@@ -79,6 +87,42 @@ export default function ProductFilterSidebar({
                 aria-label={`Filter by skin type ${s}`}
               />
               <span>{s}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Tags */}
+      <div className="mb-4">
+        <p className="text-sm font-medium text-gray-700 mb-2">Tags</p>
+        <div className="space-y-1">
+          {sortedTags.map((t) => (
+            <label key={t} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={filters.tags.has(t)}
+                onChange={() => onChange({ ...filters, tags: toggleInSet(filters.tags, t) })}
+                aria-label={`Filter by tag ${t}`}
+              />
+              <span>{t}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Ingredients */}
+      <div className="mb-4">
+        <p className="text-sm font-medium text-gray-700 mb-2">Ingredients</p>
+        <div className="space-y-1 max-h-48 overflow-auto pr-1">
+          {sortedIngs.map((ing) => (
+            <label key={ing} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={filters.ingredients.has(ing)}
+                onChange={() => onChange({ ...filters, ingredients: toggleInSet(filters.ingredients, ing) })}
+                aria-label={`Filter by ingredient ${ing}`}
+              />
+              <span>{ing}</span>
             </label>
           ))}
         </div>
