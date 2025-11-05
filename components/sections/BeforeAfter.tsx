@@ -11,8 +11,8 @@ export default function BeforeAfter() {
       <div className="rounded-2xl overflow-hidden shadow-lg">
         <div className="relative">
           <ReactCompareSlider
-            itemOne={<ReactCompareSliderImage src="/assets/cream-2.jpg" alt="Before skincare results" loading="lazy" />}
-            itemTwo={<ReactCompareSliderImage src="/assets/cream-3.jpg" alt="After skincare results" loading="lazy" />}
+            itemOne={<ReactCompareSliderImage src="/assets/compare-2.jpeg" alt="Before skincare results" loading="lazy" />}
+            itemTwo={<ReactCompareSliderImage src="/assets/compare-1.jpeg" alt="After skincare results" loading="lazy" />}
             position={50}
             className="w-full h-[380px] md:h-[460px]"
           />

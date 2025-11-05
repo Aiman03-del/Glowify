@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Heart, Menu, X } from "lucide-react";
+import { ShoppingBag, Heart, Menu, X, LogOut, User as UserIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUI } from "@/context/UIContext";
+import { onAuthStateChanged, signOut, type User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -19,6 +21,7 @@ export default function Navbar() {
   const [visible, setVisible] = useState(true);
   const lastY = useRef(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   const isActive = (href: string) => {
     if (!pathname) return false;
@@ -50,6 +53,21 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    return () => unsub();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast.success("Logged out");
+    } catch (e) {
+      toast.error("Failed to log out");
+    }
+  };
+
   // Close on Escape for mobile menu
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -66,7 +84,7 @@ export default function Navbar() {
           visible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="flex justify-between items-center px-5 py-3 bg-white/70 backdrop-blur-md shadow-md rounded-full border border-white/60">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center px-5 py-3 bg-white/70 backdrop-blur-md shadow-md rounded-full border border-white/60">
         <Link href="/" className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -78,14 +96,16 @@ export default function Navbar() {
           />
         </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-4 md:gap-6">
+          {/* Desktop center menu */}
+          <div className="hidden md:flex items-center justify-center gap-4 md:gap-6">
             <Link href="/" className={`transition ${isActive("/") ? "text-pink-700 " : "hover:text-pink-600"}`}>Home</Link>
             <Link href="/about" className={`transition ${isActive("/about") ? "text-pink-700 " : "hover:text-pink-600"}`}>About</Link>
             <Link href="/products" className={`transition ${isActive("/products") ? "text-pink-700 " : "hover:text-pink-600"}`}>Products</Link>
             <Link href="/contact" className={`transition ${isActive("/contact") ? "text-pink-700 " : "hover:text-pink-600"}`}>Contact</Link>
+          </div>
 
-            {/* Icon-only actions */}
+          {/* Desktop right actions */}
+          <div className="hidden md:flex items-center justify-end gap-4">
             <Link
               href="/favorites"
               aria-label="Open favorites"
@@ -112,6 +132,34 @@ export default function Navbar() {
                 </span>
               )}
             </button>
+
+            <span className="h-5 w-px bg-pink-200" aria-hidden="true" />
+
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1.5 text-pink-600 hover:text-pink-700 transition"
+                aria-label="Log out"
+              >
+                <LogOut className="w-4 h-4" /> Logout
+              </button>
+            ) : (
+              <>
+                <Link
+                  href="/sign-up"
+                  className="px-3 py-1.5 rounded-full bg-pink-600 text-white hover:bg-pink-700 transition"
+                >
+                  Sign up
+                </Link>
+                <Link
+                  href="/sign-in"
+                  aria-label="Login"
+                  className="text-pink-600 hover:text-pink-700 transition"
+                >
+                  <UserIcon className="w-5 h-5" />
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile actions */}
@@ -161,6 +209,19 @@ export default function Navbar() {
                 <Link href="/products" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/products") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Products</Link>
                 <Link href="/contact" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/contact") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Contact</Link>
                 <Link href="/favorites" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/favorites") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Favorites</Link>
+                {user ? (
+                  <button
+                    onClick={() => { setMobileOpen(false); handleLogout(); }}
+                    className="w-full text-left px-3 py-2 rounded border border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white transition"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <>
+                    <Link href="/sign-in" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/sign-in") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Sign in</Link>
+                    <Link href="/sign-up" onClick={() => setMobileOpen(false)} className={`block px-3 py-2 rounded ${isActive("/sign-up") ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"}`}>Sign up</Link>
+                  </>
+                )}
               </nav>
 
               <div className="mt-auto space-y-2">
