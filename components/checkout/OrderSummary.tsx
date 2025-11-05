@@ -11,7 +11,7 @@ function formatCurrency(num: number) {
 export default function OrderSummary() {
   const { cart } = useCart();
 
-  const subtotal = cart.reduce((acc, item) => acc + item.price, 0);
+  const subtotal = cart.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
   const shipping = subtotal > 0 ? 4.99 : 0; // flat shipping for demo
   const taxRate = 0.06; // 6% tax example
   const tax = +(subtotal * taxRate).toFixed(2);
@@ -32,13 +32,13 @@ export default function OrderSummary() {
           cart.map((it) => (
             <div key={it.id} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src={it.image} alt={it.name} className="w-12 h-12 rounded object-cover" />
+                <img src={it.image || it.images?.[0]} alt={it.name} className="w-12 h-12 rounded object-cover" />
                 <div>
                   <p className="text-sm font-medium">{it.name}</p>
-                  <p className="text-xs text-gray-500">Qty: 1</p>
+                  <p className="text-xs text-gray-500">Qty: {it.quantity || 1}</p>
                 </div>
               </div>
-              <p className="font-medium">{formatCurrency(it.price)}</p>
+              <p className="font-medium">{formatCurrency((it.price || 0) * (it.quantity || 1))}</p>
             </div>
           ))
         )}

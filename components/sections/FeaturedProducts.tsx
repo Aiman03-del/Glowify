@@ -2,27 +2,9 @@
 
 import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
-
-const products = [
-  {
-    id: 1,
-    name: "HydraGlow Serum",
-    price: 29,
-    image: "/assets/serum.jpg",
-  },
-  {
-    id: 2,
-    name: "Rose Radiance Cream",
-    price: 35,
-    image: "/assets/cream.jpg",
-  },
-  {
-    id: 3,
-    name: "Lush Lips Balm",
-    price: 15,
-    image: "/assets/lip-balm.jpg",
-  },
-];
+import Link from "next/link";
+import { products } from "@/lib/products";
+import { toast } from "sonner";
 
 export default function FeaturedProducts() {
   const { addToCart } = useCart();
@@ -43,16 +25,28 @@ export default function FeaturedProducts() {
             viewport={{ once: true }}
             className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
           >
-            <img src={p.image} alt={p.name} className="w-full h-64 object-cover" />
+            <img src={p.images[0]} alt={p.name} className="w-full h-64 object-cover" />
             <div className="p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">{p.name}</h3>
               <p className="text-pink-600 font-bold mb-4">${p.price}</p>
-              <button
-                onClick={() => addToCart(p)}
-                className="bg-pink-600 text-white px-4 py-2 rounded-full hover:bg-pink-700 transition"
-              >
-                Add to Cart
-              </button>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => {
+                    addToCart(p);
+                    toast.success(`${p.name} added to cart`);
+                  }}
+                  className="bg-pink-600 text-white px-4 py-2 rounded-full hover:bg-pink-700 transition"
+                >
+                  Add to Cart
+                </button>
+
+                <Link
+                  href={`/products/${p.id}`}
+                  className="text-sm underline text-pink-600 hover:text-pink-700"
+                >
+                  View Details
+                </Link>
+              </div>
             </div>
           </motion.div>
         ))}

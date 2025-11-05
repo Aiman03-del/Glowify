@@ -132,6 +132,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Momo Trust Display', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Helvetica", "Apple Color Emoji", "Segoe UI Emoji";
   }
 }
 

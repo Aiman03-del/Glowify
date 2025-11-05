@@ -2,10 +2,18 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import Link from "next/link";
+import { toast } from "sonner";
 import { X } from "lucide-react";
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { cart, removeFromCart, clearCart } = useCart();
+
+  function formatCurrency(num: number) {
+    return `$${num.toFixed(2)}`;
+  }
+
+  const subtotal = cart.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
 
   return (
     <AnimatePresence>
@@ -38,13 +46,21 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
               ) : (
                 cart.map((item) => (
                   <div key={item.id} className="flex items-center justify-between border-b pb-2">
-                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded" />
-                    <div>
+                    <img
+                      src={item.image || item.images?.[0]}
+                      alt={item.name}
+                      className="w-12 h-12 rounded object-cover"
+                    />
+                    <div className="flex-1 px-3 text-left">
                       <p className="font-semibold">{item.name}</p>
-                      <p className="text-pink-600 font-bold">${item.price}</p>
+                      <p className="text-xs text-gray-500">Qty: {item.quantity || 1}</p>
+                      <p className="text-pink-600 font-bold">${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</p>
                     </div>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => {
+                        removeFromCart(item.id);
+                        toast.success(`${item.name} removed from cart`);
+                      }}
                       className="text-red-500 hover:text-red-700 text-sm"
                     >
                       Remove
@@ -55,14 +71,35 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             </div>
 
             {cart.length > 0 && (
-              <div className="p-4 border-t">
-                <button
-                  onClick={clearCart}
-                  className="w-full bg-pink-600 text-white py-2 rounded-full hover:bg-pink-700"
-                >
-                  Clear Cart
-                </button>
-              </div>
+              <>
+                <div className="p-4 border-t space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">Subtotal</span>
+                    <span className="font-semibold">{formatCurrency(subtotal)}</span>
+                  </div>
+
+                  <Link href="/checkout">
+                    <button
+                      onClick={() => {
+                        onClose();
+                      }}
+                      className="w-full bg-pink-600 text-white py-2 rounded-full hover:bg-pink-700"
+                    >
+                      Proceed to Checkout
+                    </button>
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      clearCart();
+                      toast.success("Cart cleared");
+                    }}
+                    className="w-full bg-red-100 text-red-600 py-2 rounded-full hover:bg-red-200"
+                  >
+                    Clear Cart
+                  </button>
+                </div>
+              </>
             )}
           </motion.div>
         </>
