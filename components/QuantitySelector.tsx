@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-export default function QuantitySelector({ onAdd }: { onAdd: (qty: number) => void }) {
+export default function QuantitySelector({ onAdd, buttonAriaLabel }: { onAdd: (qty: number) => void; buttonAriaLabel?: string }) {
   const [quantity, setQuantity] = useState(1);
 
   return (
@@ -24,7 +24,7 @@ export default function QuantitySelector({ onAdd }: { onAdd: (qty: number) => vo
         </button>
       </div>
 
-      <Button className="bg-pink-600 hover:bg-pink-700 text-white" onClick={() => onAdd(quantity)}>
+      <Button aria-label={buttonAriaLabel} className="bg-pink-600 hover:bg-pink-700 text-white" onClick={() => onAdd(quantity)}>
         Add {quantity} to Cart
       </Button>
     </div>
