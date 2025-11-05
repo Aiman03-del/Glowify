@@ -6,9 +6,11 @@ import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { toast } from "sonner";
 import { X } from "lucide-react";
+import { useUI } from "@/context/UIContext";
 
-export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function CartDrawer() {
   const { cart, removeFromCart, clearCart } = useCart();
+  const { isCartOpen: open, closeCart: onClose } = useUI();
 
   function formatCurrency(num: number) {
     return `$${num.toFixed(2)}`;

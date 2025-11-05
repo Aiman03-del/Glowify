@@ -12,12 +12,18 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { useWishlist } from "@/context/WishlistContext";
+import { useUI } from "@/context/UIContext";
+import { reviewsByProduct } from "@/lib/reviews";
+import ProductReviewModal from "@/components/sections/ProductReviewModal";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export default function ProductPage() {
   const { id } = useParams();
   const product: Product | undefined = productList.find((p) => p.id === Number(id));
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isWishlisted } = useWishlist();
+  const { openCart } = useUI();
+  const [reviewsOpen, setReviewsOpen] = useState(false);
 
   const [mainImage, setMainImage] = useState<string | undefined>(product?.images?.[0]);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -32,8 +38,23 @@ export default function ProductPage() {
 
   if (!product) return <p className="text-center mt-20 text-gray-500">Product not found</p>;
 
+  const category = product.category as string | undefined;
+  const categoryPlural = category
+    ? ({ Serum: "Serums", Cleanser: "Cleansers", Mask: "Masks" } as Record<string, string>)[category] || `${category}s`
+    : undefined;
+
   return (
     <motion.main className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
+      {/* Breadcrumbs */}
+      <div className="md:col-span-2 -mt-4">
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            ...(category ? [{ label: categoryPlural || category, href: `/products?cat=${encodeURIComponent(category)}` }] : []),
+            { label: product.name },
+          ]}
+        />
+      </div>
       {/* Main Image */}
       <div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
@@ -66,7 +87,19 @@ export default function ProductPage() {
               size="icon"
               variant="ghost"
               className={`text-red-500 ${isWishlisted(product.id) ? "fill-current" : ""}`}
-              onClick={() => (isWishlisted(product.id) ? removeFromWishlist(product.id) : addToWishlist(product as Product))}
+              onClick={() =>
+                isWishlisted(product.id)
+                  ? removeFromWishlist(product.id)
+                  : addToWishlist({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      images: product.images,
+                      image: product.images?.[0],
+                      description: product.description,
+                      variants: product.variants as unknown as { [key: string]: string[] },
+                    })
+              }
               aria-label={isWishlisted(product.id) ? "Remove from favorites" : "Add to favorites"}
             >
               <Heart className="w-8 h-8" />
@@ -74,7 +107,7 @@ export default function ProductPage() {
           </div>
           <p className="text-gray-600">{product.description}</p>
           <p className="text-2xl font-semibold text-pink-600">${product.price}</p>
-        </div>
+  </div>
 
         {/* Variant selectors */}
         {product.variants && (
@@ -104,14 +137,35 @@ export default function ProductPage() {
           onAdd={(qty) => {
             addToCart({ product, quantity: qty, options: selectedOptions });
             toast.success(`${product.name} (${qty}) added to cart`);
+            openCart();
           }}
           buttonAriaLabel={`Add ${product.name} to cart`}
         />
+
+        {/* See Reviews */}
+        <div className="mt-3">
+          <Button
+            variant="link"
+            className="text-pink-600 hover:text-pink-700 p-0"
+            aria-label={`See reviews for ${product.name}`}
+            onClick={() => setReviewsOpen(true)}
+          >
+            See Reviews
+          </Button>
+        </div>
       </div>
 
       <div className="md:col-span-2">
         <RelatedProducts currentId={product.id} />
       </div>
+
+      {/* Reviews Modal */}
+      <ProductReviewModal
+        open={reviewsOpen}
+        onClose={() => setReviewsOpen(false)}
+        productName={product.name}
+        reviews={reviewsByProduct[product.id] ?? []}
+      />
     </motion.main>
   );
 }
