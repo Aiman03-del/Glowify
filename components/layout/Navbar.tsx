@@ -84,8 +84,8 @@ export default function Navbar() {
           visible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="grid grid-cols-[auto_1fr_auto] items-center px-5 py-3 bg-white/70 backdrop-blur-md shadow-md rounded-full border border-white/60">
-        <Link href="/" className="flex items-center gap-3">
+  <div className="grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-5 py-3 bg-white/70 backdrop-blur-md shadow-md rounded-full border border-white/60 gap-2">
+  <Link href="/" className="flex items-center gap-3 col-start-1 row-start-1">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logo.png"
@@ -97,7 +97,7 @@ export default function Navbar() {
         </Link>
 
           {/* Desktop center menu */}
-          <div className="hidden md:flex items-center justify-center gap-4 md:gap-6">
+          <div className="hidden md:flex items-center md:justify-self-center gap-4 md:gap-6 md:col-start-2 md:row-start-1 min-w-0">
             <Link href="/" className={`transition ${isActive("/") ? "text-pink-700 " : "hover:text-pink-600"}`}>Home</Link>
             <Link href="/about" className={`transition ${isActive("/about") ? "text-pink-700 " : "hover:text-pink-600"}`}>About</Link>
             <Link href="/products" className={`transition ${isActive("/products") ? "text-pink-700 " : "hover:text-pink-600"}`}>Products</Link>
@@ -105,7 +105,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right actions */}
-          <div className="hidden md:flex items-center justify-end gap-4">
+          <div className="hidden md:flex items-center justify-end gap-4 md:justify-self-end md:col-start-3 md:row-start-1">
             <Link
               href="/favorites"
               aria-label="Open favorites"
@@ -163,7 +163,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile actions */}
-          <div className="md:hidden flex items-center gap-2">
+          <div className="md:hidden flex items-center gap-2 col-start-3 row-start-1 justify-self-end">
             <button
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               onClick={() => setMobileOpen((v) => !v)}
